@@ -1,8 +1,10 @@
+# Copyright @ISmartCoder
+# Updates Channel https://t.me/TheSmartDev
 from flask import Flask, jsonify, request, render_template
 import json
 import random
 import os
-import glob
+import pycountry
 
 app = Flask(__name__)
 
@@ -53,23 +55,43 @@ def get_address():
 @app.route('/api/countries', methods=['GET'])
 def get_countries():
     try:
-        json_files = glob.glob(os.path.join('data', '*.json'))
+        data_dir = 'data'
         countries = []
-        for file_path in json_files:
-            country_code = os.path.splitext(os.path.basename(file_path))[0].upper()
-            with open(file_path, 'r') as file:
-                data = json.load(file)
-                if data and isinstance(data, list) and len(data) > 0:
-                    country_name = data[0].get('country', country_code)
-                    countries.append({
-                        "country_name": country_name,
-                        "country_code": country_code
-                    })
+        
+        # Check if data directory exists
+        if not os.path.exists(data_dir):
+            return jsonify({
+                "error": "Data directory not found",
+                "api_owner": "@ISmartCoder",
+                "api_updates": "t.me/TheSmartDev"
+            }), 404
+
+        # Iterate through .json files in data directory
+        for filename in os.listdir(data_dir):
+            if filename.endswith('.json'):
+                country_code = filename.split('.')[0].upper()
+                # Get country name from pycountry
+                country = pycountry.countries.get(alpha_2=country_code)
+                country_name = country.name if country else "Unknown"
+                
+                countries.append({
+                    "country_code": country_code,
+                    "country_name": country_name
+                })
+        
+        if not countries:
+            return jsonify({
+                "error": "No countries found",
+                "api_owner": "@ISmartCoder",
+                "api_updates": "t.me/TheSmartDev"
+            }), 404
+
         return jsonify({
-            "countries": countries,
+            "countries": sorted(countries, key=lambda x: x["country_name"]),
             "api_owner": "@ISmartCoder",
             "api_updates": "t.me/TheSmartDev"
         })
+
     except Exception as e:
         return jsonify({
             "error": str(e),

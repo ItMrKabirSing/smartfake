@@ -1,5 +1,3 @@
-# Copyright @ISmartCoder
-# Updates Channel https://t.me/TheSmartDev
 from flask import Flask, jsonify, request, render_template
 import json
 import random
@@ -58,7 +56,6 @@ def get_countries():
         data_dir = 'data'
         countries = []
         
-        # Check if data directory exists
         if not os.path.exists(data_dir):
             return jsonify({
                 "error": "Data directory not found",
@@ -66,11 +63,9 @@ def get_countries():
                 "api_updates": "t.me/TheSmartDev"
             }), 404
 
-        # Iterate through .json files in data directory
         for filename in os.listdir(data_dir):
             if filename.endswith('.json'):
                 country_code = filename.split('.')[0].upper()
-                # Get country name from pycountry
                 country = pycountry.countries.get(alpha_2=country_code)
                 country_name = country.name if country else "Unknown"
                 
@@ -88,6 +83,7 @@ def get_countries():
 
         return jsonify({
             "countries": sorted(countries, key=lambda x: x["country_name"]),
+            "total_countries": len(countries),
             "api_owner": "@ISmartCoder",
             "api_updates": "t.me/TheSmartDev"
         })

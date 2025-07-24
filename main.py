@@ -20,7 +20,6 @@ def get_address():
             "api_updates": "t.me/TheSmartDev"
         }), 400
     
-    # Handle UK/GB equivalence
     file_country_code = 'uk' if country_code == 'UK' else country_code.lower()
     display_country_code = 'GB' if country_code == 'UK' else country_code
     
@@ -40,10 +39,9 @@ def get_address():
         random_address["api_owner"] = "@ISmartCoder"
         random_address["api_updates"] = "t.me/TheSmartDev"
         
-        # Get country flag using pycountry
         country = pycountry.countries.get(alpha_2=display_country_code)
-        country_flag = country.flag if country and hasattr(country, 'flag') else "Unknown"
-        random_address["country_flag"] = country_flag
+        if country and hasattr(country, 'flag'):
+            random_address["country_flag"] = country.flag
         
         return jsonify(random_address)
     
@@ -76,7 +74,6 @@ def get_countries():
         for filename in os.listdir(data_dir):
             if filename.endswith('.json'):
                 country_code = filename.split('.')[0].upper()
-                # Handle UK/GB case for display
                 display_country_code = 'GB' if country_code == 'UK' else country_code
                 country = pycountry.countries.get(alpha_2=display_country_code)
                 country_name = country.name if country else "Unknown"

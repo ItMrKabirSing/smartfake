@@ -20,7 +20,7 @@ def get_address():
             "api_updates": "t.me/TheSmartDev"
         }), 400
     
-    # Handle UK/GB equivalence
+    
     file_country_code = 'uk' if country_code == 'UK' else country_code.lower()
     display_country_code = 'GB' if country_code == 'UK' else country_code
     

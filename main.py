@@ -14,7 +14,7 @@ def status():
 
 @app.route('/api/address', methods=['GET'])
 def get_address():
-    country_input = request.args.get('country', '').strip().lower()
+    country_input = request.args.get('country', request.args.get('code', '')).strip().lower()
     if not country_input:
         return jsonify({
             "error": "Country code or name parameter is required",
